@@ -4,30 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JPainel - Painel de Controle</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="splash.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/lucide-react"></script>
 </head>
-<body>
-  <div id="root"></div>
+<body class="bg-gray-100">
+  <div id="root" class="min-h-screen"></div>
   
-  <script type="text/babel" data-type="module" src="dashboard.js"></script>
-  <script type="text/babel" data-type="module">
-    
-    function App() {
-      return (
-        <div className="p-4">
-          <h1 className="text-2xl font-bold">JPainel</h1>
-          <p>Carregando...</p>
-        </div>
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+  <!-- Splash screen will be inserted here by splash.js -->
+  
+  <script src="splash.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
