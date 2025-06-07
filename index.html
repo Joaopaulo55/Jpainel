@@ -6,16 +6,25 @@
   <title>JPainel - Painel de Controle</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="splash.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-</head>
+  </head>
 <body class="bg-gray-100">
   <div id="root" class="min-h-screen"></div>
   
   <!-- Splash screen will be inserted here by splash.js -->
-  
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+<!-- Inicia o painel SOMENTE depois do DOM estar pronto -->
+<script>
+  window.addEventListener("DOMContentLoaded", function () {
+    const script = document.createElement("script");
+    script.src = "dashboard.js";
+    document.body.appendChild(script);
+  });
+</script>
+
   <script src="splash.js"></script>
   <script src="dashboard.js"></script>
 </body>

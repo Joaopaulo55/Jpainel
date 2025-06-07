@@ -1,4 +1,8 @@
 // JPainel - Painel de Controle Pessoal
+if (!window.React || !window.ReactDOM) {
+  console.error("React ou ReactDOM não carregados.");
+}
+
 
 const { useState, useEffect } = React;
 
