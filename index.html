@@ -3,29 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JPainel - Painel de Controle</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="splash.css">
-  </head>
-<body class="bg-gray-100">
-  <div id="root" class="min-h-screen"></div>
-  
-  <!-- Splash screen will be inserted here by splash.js -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <title>JPainel - Básico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-4xl mx-auto py-8 px-4">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">JPainel</h1>
+      <button id="refreshBtn" class="bg-blue-600 text-white px-4 py-2 rounded">Atualizar</button>
+    </div>
 
-<!-- Inicia o painel SOMENTE depois do DOM estar pronto -->
-<script>
-  window.addEventListener("DOMContentLoaded", function () {
-    const script = document.createElement("script");
-    script.src = "dashboard.js";
-    document.body.appendChild(script);
-  });
-</script>
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold mb-2">Status do Backend</h2>
+      <p id="status" class="text-lg">Carregando...</p>
+    </div>
 
-  <script src="splash.js"></script>
-  <script src="dashboard.js"></script>
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold mb-2">Logs Recentes</h2>
+      <ul id="logsList" class="space-y-1 text-sm max-h-60 overflow-y-auto bg-white p-3 border rounded"></ul>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold mb-2">Gráfico de Erros</h2>
+      <canvas id="logChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://backend-bdownload.onrender.com';
+
+    async function fetchStatus() {
+      const res = await fetch(`${API}/status`);
+      const data = await res.json();
+      document.getElementById('status').textContent = data.status || 'Erro ao obter status';
+    }
+
+    async function fetchLogs() {
+      const res = await fetch(`${API}/logs?limit=50`);
+      const data = await res.json();
+      const logs = data.logs || [];
+      const logsList = document.getElementById('logsList');
+      logsList.innerHTML = logs.map(log => {
+        let cor = 'text-gray-600';
+        if (log.tipo === 'ERRO') cor = 'text-red-600';
+        if (log.tipo === 'ALERTA') cor = 'text-yellow-500';
+        if (log.tipo === 'SUCESSO') cor = 'text-green-600';
+        return `<li class="${cor}">[${new Date(log.timestamp).toLocaleString()}] ${log.tipo}: ${log.mensagem}</li>`;
+      }).join('');
+
+      plotChart(logs);
+    }
+
+    function plotChart(logs) {
+      const ctx = document.getElementById('logChart').getContext('2d');
+      const labels = logs.map(l => new Date(l.timestamp).toLocaleTimeString());
+      const errors = logs.map(l => l.tipo === 'ERRO' ? 1 : 0);
+
+      if (window.chartInstance) window.chartInstance.destroy();
+      window.chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Erros',
+            data: errors,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            tension: 0.2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    async function loadData() {
+      await fetchStatus();
+      await fetchLogs();
+    }
+
+    document.getElementById('refreshBtn').onclick = loadData;
+    window.onload = loadData;
+  </script>
 </body>
 </html>
