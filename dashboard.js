@@ -1,6 +1,7 @@
+// JPainel - Painel de Controle Pessoal
+
 const { useState, useEffect } = React;
 
-// Componentes UI simplificados
 function Card({ children, className = '' }) {
   return (
     <div className={`border rounded-lg shadow-sm ${className}`}>
@@ -23,7 +24,7 @@ function Button({ children, onClick, variant = 'default' }) {
     default: "bg-blue-600 text-white hover:bg-blue-700",
     outline: "border border-gray-300 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
   };
-  
+
   return (
     <button 
       onClick={onClick}
@@ -51,7 +52,7 @@ function JPainel() {
         fetch(`${BACKEND_URL}/logs?limit=50`),
         fetch(`${BACKEND_URL}/stats`)
       ]);
-      
+
       setServerStatus((await statusRes.json())?.status || "Desconhecido");
       setLogs((await logsRes.json())?.logs || []);
       setStats((await statsRes.json()) || null);
@@ -69,10 +70,17 @@ function JPainel() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!loading && logs.length > 0) {
+      setTimeout(initChart, 300);
+    }
+  }, [loading, logs]);
+
   const colorForLog = (type) => {
-    if (type === "erro") return "text-red-600";
-    if (type === "alerta") return "text-yellow-500";
-    return "text-green-600";
+    if (type === "ERRO") return "text-red-600";
+    if (type === "ALERTA") return "text-yellow-500";
+    if (type === "SUCESSO") return "text-green-600";
+    return "text-gray-600";
   };
 
   const chartData = {
@@ -80,14 +88,14 @@ function JPainel() {
     datasets: [
       {
         label: "Erros",
-        data: logs.map((log) => (log.tipo === "erro" ? 1 : 0)),
+        data: logs.map((log) => (log.tipo === "ERRO" ? 1 : 0)),
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         tension: 0.1
       },
       {
         label: "Alertas",
-        data: logs.map((log) => (log.tipo === "alerta" ? 1 : 0)),
+        data: logs.map((log) => (log.tipo === "ALERTA" ? 1 : 0)),
         borderColor: "rgba(255, 206, 86, 1)",
         backgroundColor: "rgba(255, 206, 86, 0.2)",
         tension: 0.1
@@ -117,7 +125,7 @@ function JPainel() {
             <CardContent>
               <h2 className="text-xl font-semibold mb-2">Status do Servidor</h2>
               <p className="text-lg">
-                Backend: <strong className={serverStatus.includes("✅") ? "text-green-500" : "text-red-500"}>
+                Backend: <strong className={serverStatus.includes("✅") || serverStatus.includes("healthy") ? "text-green-500" : "text-red-500"}>
                   {serverStatus}
                 </strong>
               </p>
@@ -151,7 +159,7 @@ function JPainel() {
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-xl font-semibold">Logs Recentes</h2>
                 <span className="text-sm">
-                  Total: {logs.length} | Erros: {logs.filter(l => l.tipo === 'erro').length}
+                  Total: {logs.length} | Erros: {logs.filter(l => l.tipo === 'ERRO').length}
                 </span>
               </div>
               <div className="max-h-96 overflow-y-auto border rounded-lg p-2">
@@ -177,14 +185,13 @@ function JPainel() {
   );
 }
 
-// Inicializa o gráfico após renderização
 function initChart() {
   const canvas = document.getElementById('chart');
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   const chartData = JSON.parse(canvas.getAttribute('data-data'));
-  
+
   new Chart(ctx, {
     type: 'line',
     data: chartData,
@@ -203,9 +210,5 @@ function initChart() {
   });
 }
 
-// Renderiza o aplicativo
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<JPainel />);
-
-// Atualiza o gráfico quando os dados mudam
-setTimeout(initChart, 500);
