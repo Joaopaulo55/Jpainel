@@ -689,3 +689,217 @@ input:checked + .toggle-slider:before {
 .splash-container {
     z-index: 9999 !important;
 }
+
+
+/* ==================== */
+/* RESPONSIVIDADE EXTRA */
+/* ==================== */
+
+/* Telas médias (tablets) */
+@media (max-width: 992px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .stats-period-selector {
+        width: 100%;
+    }
+    
+    .modal-content .grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Telas pequenas (tablets pequenos e grandes celulares) */
+@media (max-width: 768px) {
+    #root {
+        padding: 1rem 0.5rem;
+    }
+    
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .logs-container {
+        max-height: 300px;
+    }
+    
+    .log-entry {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .log-timestamp {
+        min-width: 100%;
+    }
+    
+    .button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .dark-mode-toggle {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Telas muito pequenas (celulares) */
+@media (max-width: 576px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.3rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .input-group {
+        margin-bottom: 1rem;
+    }
+    
+    input, select, textarea {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Ajustes específicos para a tabela em mobile */
+    .table-container {
+        border-radius: 0;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        width: calc(100% + 1rem);
+    }
+    
+    table {
+        font-size: 0.8rem;
+    }
+    
+    th, td {
+        padding: 0.5rem;
+    }
+    
+    /* Layout de cards em mobile */
+    .grid > .card {
+        margin-bottom: 1rem;
+    }
+    
+    /* Modal em mobile */
+    #siteModal .card {
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+/* Telas extremamente pequenas (celulares pequenos) */
+@media (max-width: 400px) {
+    html {
+        font-size: 12px;
+    }
+    
+    .button {
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .card {
+        padding: 1rem 0.75rem;
+    }
+    
+    .log-entry {
+        font-size: 0.75rem;
+    }
+}
+
+/* Orientação paisagem em celulares */
+@media (max-height: 500px) and (orientation: landscape) {
+    .logs-container {
+        max-height: 200px;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Ajustes para quando o teclado virtual está aberto em mobile */
+@media (max-height: 400px) {
+    #root {
+        padding-bottom: 2rem;
+    }
+}
+
+/* ========================== */
+/* CLASSES UTILITÁRIAS EXTRAS */
+/* ========================== */
+/* Para uso específico em media queries */
+.mobile-only {
+    display: none !important;
+}
+
+.desktop-only {
+    display: block !important;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block !important;
+    }
+    
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+/* Classes para elementos que devem ser coluna em mobile */
+.flex-mobile-col {
+    flex-direction: row;
+}
+
+@media (max-width: 768px) {
+    .flex-mobile-col {
+        flex-direction: column;
+    }
+}
+
+/* Texto que deve ser menor em mobile */
+.text-mobile-sm {
+    font-size: inherit;
+}
+
+@media (max-width: 768px) {
+    .text-mobile-sm {
+        font-size: 0.8em;
+    }
+}
+
+/* Esconder elementos em breakpoints específicos */
+.hide-on-mobile {
+    display: block;
+}
+
+.hide-on-desktop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hide-on-mobile {
+        display: none;
+    }
+    
+    .hide-on-desktop {
+        display: block;
+    }
+}

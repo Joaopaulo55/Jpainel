@@ -1,98 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JPainel - Básico</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPainel - Monitoramento de Logs e Sites</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="max-w-4xl mx-auto py-8 px-4">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">JPainel</h1>
-      <button id="refreshBtn" class="bg-blue-600 text-white px-4 py-2 rounded">Atualizar</button>
+<body>
+    
+    <div id="root">
+        <div class="container">
+            <header class="flex justify-between items-center mb-5">
+                <h1><i class="fas fa-terminal mr-2"></i>JPainel</h1>
+                <div class="flex gap-3 items-center">
+                    <button id="authBtn" class="button button-primary hidden">
+                        <i class="fas fa-sign-in-alt"></i> Login com Google
+                    </button>
+                    <img id="userAvatar" src="" alt="User" class="hidden w-8 h-8 rounded-full">
+                    <button id="connectBtn" class="button button-primary">
+                        <i class="fas fa-plug"></i> Conectar ao Servidor
+                    </button>
+                    <button id="themeToggle" class="button button-outline">
+                        <i class="fas fa-moon"></i> Tema
+                    </button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- Seção de Monitoramento de Sites -->
+                <div class="card lg:col-span-1">
+                    <div class="card-header">
+                        <h3><i class="fas fa-globe mr-2"></i>Monitoramento de Sites</h3>
+                    </div>
+                    <div class="input-group">
+                        <label for="siteUrl">URL do Site</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="siteUrl" placeholder="https://exemplo.com">
+                            <button id="addSiteBtn" class="button button-primary">Adicionar</button>
+                        </div>
+                    </div>
+                    
+                    <div id="sitesList" class="mt-3">
+                        <div class="text-center text-300 p-4">
+                            <i class="fas fa-info-circle mr-2"></i> Nenhum site sendo monitorado
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Estatísticas -->
+                <div class="card lg:col-span-2">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar mr-2"></i>Estatísticas</h3>
+                        <div class="flex gap-2">
+                            <select id="statsPeriod" class="button button-outline">
+                                <option value="24h">Últimas 24h</option>
+                                <option value="7d">Últimos 7 dias</option>
+                                <option value="30d">Últimos 30 dias</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card">
+                            <h4>Tráfego por Região</h4>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="regionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>Status do Site</h4>
+                            <div id="siteStatus" class="flex flex-col gap-3">
+                                <div class="flex justify-between">
+                                    <span>Disponibilidade:</span>
+                                    <span id="uptime" class="font-bold">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Tempo de Resposta:</span>
+                                    <span id="responseTime" class="font-bold">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>SEO Score:</span>
+                                    <span id="seoScore" class="font-bold">--</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Certificado SSL:</span>
+                                    <span id="sslStatus" class="font-bold">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Logs -->
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h3><i class="fas fa-list mr-2"></i>Logs do Servidor</h3>
+                    <div class="flex gap-2">
+                        <select id="logFilter" class="button button-outline">
+                            <option value="all">Todos</option>
+                            <option value="error">Erros</option>
+                            <option value="warning">Avisos</option>
+                            <option value="info">Informações</option>
+                        </select>
+                        <button id="clearLogsBtn" class="button button-outline">
+                            <i class="fas fa-trash"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="logs-container">
+                    <div id="logsList">
+                        <div class="text-center text-300 p-4">
+                            <i class="fas fa-info-circle mr-2"></i> Aguardando conexão com o servidor...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-4">
-      <h2 class="text-xl font-semibold mb-2">Status do Backend</h2>
-      <p id="status" class="text-lg">Carregando...</p>
+    <!-- Modal para detalhes do site -->
+    <div id="siteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="card w-full max-w-2xl">
+            <div class="card-header">
+                <h3 id="modalTitle">Detalhes do Site</h3>
+                <button id="closeModalBtn" class="button button-outline">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+            <div id="modalContent" class="p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card">
+                        <h4>Informações Básicas</h4>
+                        <div class="flex flex-col gap-2 mt-3">
+                            <div class="flex justify-between">
+                                <span>URL:</span>
+                                <span id="modalUrl" class="font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Monitorando desde:</span>
+                                <span id="modalAdded" class="font-bold">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Disponibilidade:</span>
+                                <span id="modalUptime" class="font-bold">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>SEO</h4>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="seoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <h4>Tráfego por País</h4>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="countryChart"></canvas>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <h4>Tráfego Recente</h4>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-4">
-      <h2 class="text-xl font-semibold mb-2">Logs Recentes</h2>
-      <ul id="logsList" class="space-y-1 text-sm max-h-60 overflow-y-auto bg-white p-3 border rounded"></ul>
-    </div>
-
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Gráfico de Erros</h2>
-      <canvas id="logChart" width="400" height="200"></canvas>
-    </div>
-  </div>
-
-  <script>
-    const API = 'https://backend-bdownload.onrender.com';
-
-    async function fetchStatus() {
-      const res = await fetch(`${API}/status`);
-      const data = await res.json();
-      document.getElementById('status').textContent = data.status || 'Erro ao obter status';
-    }
-
-    async function fetchLogs() {
-      const res = await fetch(`${API}/logs?limit=50`);
-      const data = await res.json();
-      const logs = data.logs || [];
-      const logsList = document.getElementById('logsList');
-      logsList.innerHTML = logs.map(log => {
-        let cor = 'text-gray-600';
-        if (log.tipo === 'ERRO') cor = 'text-red-600';
-        if (log.tipo === 'ALERTA') cor = 'text-yellow-500';
-        if (log.tipo === 'SUCESSO') cor = 'text-green-600';
-        return `<li class="${cor}">[${new Date(log.timestamp).toLocaleString()}] ${log.tipo}: ${log.mensagem}</li>`;
-      }).join('');
-
-      plotChart(logs);
-    }
-
-    function plotChart(logs) {
-      const ctx = document.getElementById('logChart').getContext('2d');
-      const labels = logs.map(l => new Date(l.timestamp).toLocaleTimeString());
-      const errors = logs.map(l => l.tipo === 'ERRO' ? 1 : 0);
-
-      if (window.chartInstance) window.chartInstance.destroy();
-      window.chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Erros',
-            data: errors,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            tension: 0.2,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1 }
-            }
-          }
-        }
-      });
-    }
-
-    async function loadData() {
-      await fetchStatus();
-      await fetchLogs();
-    }
-
-    document.getElementById('refreshBtn').onclick = loadData;
-    window.onload = loadData;
-  </script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
