@@ -1,6 +1,6 @@
 // Configurações globais
 const config = {
-    serverUrl: 'https://backend-bdownload.onrender.com',
+    serverUrl: 'https://jpainel-backend.onrender.com',
     sites: JSON.parse(localStorage.getItem('monitoredSites')) || [],
     theme: localStorage.getItem('theme') || 'dark',
     charts: {},
