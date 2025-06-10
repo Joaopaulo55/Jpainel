@@ -3,134 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JPainel - Monitoramento de sites e logs em tempo real">
     <title>JPainel - Monitoramento de Logs e Sites</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    
     <div id="root">
         <div class="container">
+            <!-- Header melhorado com dropdown para mobile -->
             <header class="flex justify-between items-center mb-5">
-                <h1><i class="fas fa-terminal mr-2"></i>JPainel</h1>
-                <div class="flex gap-3 items-center">
-                    <button id="authBtn" class="button button-primary hidden">
-                        <i class="fas fa-sign-in-alt"></i> Login com Google
+                <div class="flex items-center gap-3">
+                    <button id="mobileMenuBtn" class="button button-outline mobile-only">
+                        <i class="fas fa-bars"></i>
                     </button>
-                    <img id="userAvatar" src="" alt="User" class="hidden w-8 h-8 rounded-full">
-                    <button id="connectBtn" class="button button-primary">
-                        <i class="fas fa-plug"></i> Conectar ao Servidor
-                    </button>
-                    <button id="themeToggle" class="button button-outline">
-                        <i class="fas fa-moon"></i> Tema
-                    </button>
+                    <h1 class="flex items-center">
+                        <i class="fas fa-terminal mr-2 text-accent-100"></i>
+                        <span>JPainel</span>
+                    </h1>
                 </div>
-            </header>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <!-- Seção de Monitoramento de Sites -->
-                <div class="card lg:col-span-1">
-                    <div class="card-header">
-                        <h3><i class="fas fa-globe mr-2"></i>Monitoramento de Sites</h3>
-                    </div>
-                    <div class="input-group">
-                        <label for="siteUrl">URL do Site</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="siteUrl" placeholder="https://exemplo.com">
-                            <button id="addSiteBtn" class="button button-primary">Adicionar</button>
-                        </div>
+                
+                <div id="headerControls" class="flex gap-3 items-center">
+                    <div id="authContainer" class="flex items-center gap-3">
+                        <button id="authBtn" class="button button-primary hidden">
+                            <i class="fas fa-sign-in-alt"></i> <span class="hide-on-mobile">Login com Google</span>
+                        </button>
+                        <img id="userAvatar" src="" alt="User" class="hidden w-8 h-8 rounded-full">
                     </div>
                     
-                    <div id="sitesList" class="mt-3">
-                        <div class="text-center text-300 p-4">
-                            <i class="fas fa-info-circle mr-2"></i> Nenhum site sendo monitorado
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de Estatísticas -->
-                <div class="card lg:col-span-2">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-bar mr-2"></i>Estatísticas</h3>
-                        <div class="flex gap-2">
-                            <select id="statsPeriod" class="button button-outline">
-                                <option value="24h">Últimas 24h</option>
-                                <option value="7d">Últimos 7 dias</option>
-                                <option value="30d">Últimos 30 dias</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="card">
-                            <h4>Tráfego por Região</h4>
-                            <div class="chart-container" style="height: 300px;">
-                                <canvas id="regionChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h4>Status do Site</h4>
-                            <div id="siteStatus" class="flex flex-col gap-3">
-                                <div class="flex justify-between">
-                                    <span>Disponibilidade:</span>
-                                    <span id="uptime" class="font-bold">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Tempo de Resposta:</span>
-                                    <span id="responseTime" class="font-bold">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>SEO Score:</span>
-                                    <span id="seoScore" class="font-bold">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Certificado SSL:</span>
-                                    <span id="sslStatus" class="font-bold">--</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Seção de Logs -->
-            <div class="card mt-5">
-                <div class="card-header">
-                    <h3><i class="fas fa-list mr-2"></i>Logs do Servidor</h3>
                     <div class="flex gap-2">
-                        <select id="logFilter" class="button button-outline">
-                            <option value="all">Todos</option>
-                            <option value="error">Erros</option>
-                            <option value="warning">Avisos</option>
-                            <option value="info">Informações</option>
-                        </select>
-                        <button id="clearLogsBtn" class="button button-outline">
-                            <i class="fas fa-trash"></i> Limpar
+                        <button id="connectBtn" class="button button-primary">
+                            <i class="fas fa-plug"></i> <span class="hide-on-mobile">Conectar</span>
+                        </button>
+                        <button id="themeToggle" class="button button-outline">
+                            <i class="fas fa-moon"></i> <span class="hide-on-mobile">Tema</span>
                         </button>
                     </div>
                 </div>
-                
-                <div class="logs-container">
-                    <div id="logsList">
-                        <div class="text-center text-300 p-4">
-                            <i class="fas fa-info-circle mr-2"></i> Aguardando conexão com o servidor...
+            </header>
+
+            <!-- Conteúdo principal em grid responsivo -->
+            <main>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <!-- Seção de Monitoramento de Sites -->
+                    <section class="card lg:col-span-1">
+                        <div class="card-header">
+                            <h3><i class="fas fa-globe mr-2"></i>Monitoramento de Sites</h3>
+                        </div>
+                        <div class="input-group">
+                            <label for="siteUrl">URL do Site</label>
+                            <div class="flex gap-2 flex-mobile-col">
+                                <input type="url" id="siteUrl" placeholder="https://exemplo.com" pattern="https?://.+" 
+                                       title="Insira uma URL válida (começando com http:// ou https://)">
+                                <button id="addSiteBtn" class="button button-primary">
+                                    <i class="fas fa-plus"></i> <span>Adicionar</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="sitesList" class="mt-3">
+                            <div class="text-center text-300 p-4">
+                                <i class="fas fa-info-circle mr-2"></i> Nenhum site sendo monitorado
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção de Estatísticas -->
+                    <section class="card lg:col-span-2">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar mr-2"></i>Estatísticas</h3>
+                            <div class="flex gap-2">
+                                <select id="statsPeriod" class="button button-outline">
+                                    <option value="24h">24h</option>
+                                    <option value="7d">7 dias</option>
+                                    <option value="30d">30 dias</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="card">
+                                <h4>Tráfego por Região</h4>
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="regionChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h4>Status do Site</h4>
+                                <div id="siteStatus" class="flex flex-col gap-3">
+                                    <div class="flex justify-between">
+                                        <span>Disponibilidade:</span>
+                                        <span id="uptime" class="font-bold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Tempo de Resposta:</span>
+                                        <span id="responseTime" class="font-bold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>SEO Score:</span>
+                                        <span id="seoScore" class="font-bold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Certificado SSL:</span>
+                                        <span id="sslStatus" class="font-bold">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Seção de Logs -->
+                <section class="card mt-5">
+                    <div class="card-header">
+                        <h3><i class="fas fa-list mr-2"></i>Logs do Servidor</h3>
+                        <div class="flex gap-2 flex-mobile-col">
+                            <select id="logFilter" class="button button-outline">
+                                <option value="all">Todos</option>
+                                <option value="error">Erros</option>
+                                <option value="warning">Avisos</option>
+                                <option value="info">Informações</option>
+                            </select>
+                            <button id="clearLogsBtn" class="button button-outline">
+                                <i class="fas fa-trash"></i> <span>Limpar</span>
+                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
+                    
+                    <div class="logs-container">
+                        <div id="logsList">
+                            <div class="text-center text-300 p-4">
+                                <i class="fas fa-info-circle mr-2"></i> Aguardando conexão com o servidor...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
     <!-- Modal para detalhes do site -->
     <div id="siteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="card w-full max-w-2xl">
-            <div class="card-header">
+        <div class="card w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div class="card-header sticky top-0 bg-card-100 z-10">
                 <h3 id="modalTitle">Detalhes do Site</h3>
                 <button id="closeModalBtn" class="button button-outline">
-                    <i class="fas fa-times"></i> Fechar
+                    <i class="fas fa-times"></i> <span class="hide-on-mobile">Fechar</span>
                 </button>
             </div>
-            <div id="modalContent" class="p-4">
+            <div id="modalContent" class="p-4 overflow-y-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="card">
                         <h4>Informações Básicas</h4>
@@ -176,5 +200,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="app.js"></script>
+    
+    <script>
+        // Menu mobile toggle
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+            const controls = document.getElementById('headerControls');
+            controls.classList.toggle('mobile-hidden');
+        });
+    </script>
 </body>
 </html>

@@ -116,7 +116,7 @@ function connect() {
     elements.connectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
     elements.connectBtn.disabled = true;
     
-    config.socket = new WebSocket(`${config.serverUrl.replace('https', 'wss')}`);
+    config.socket = new WebSocket(`${config.serverUrl.replace('https', 'wss')}/ws`);
     
     config.socket.onopen = () => {
         config.connected = true;
@@ -137,16 +137,20 @@ function connect() {
     
     config.socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        switch (data.type) {
-            case 'log':
-                addLog(data.message, data.logType, data.timestamp);
-                break;
-            case 'stats':
-                updateRealTimeStats(data);
-                break;
-            case 'lighthouse':
-                updateSEOMetrics(data);
-                break;
+        if (data.tipo && data.mensagem) {
+            addLog(data.mensagem, data.tipo.toLowerCase(), data.timestamp, data.ip || '');
+        } else {
+            switch (data.type) {
+                case 'log':
+                    addLog(data.message, data.logType, data.timestamp);
+                    break;
+                case 'stats':
+                    updateRealTimeStats(data);
+                    break;
+                case 'lighthouse':
+                    updateSEOMetrics(data);
+                    break;
+            }
         }
     };
     
@@ -508,7 +512,7 @@ function initCharts() {
 }
 
 // Gerenciamento de Logs
-function addLog(message, type = 'info', timestamp = new Date().toISOString()) {
+function addLog(message, type = 'info', timestamp = new Date().toISOString(), ip = '') {
     const logElement = document.createElement('div');
     logElement.className = `log-entry log-${type} fade-in`;
     
@@ -519,6 +523,7 @@ function addLog(message, type = 'info', timestamp = new Date().toISOString()) {
     logElement.innerHTML = `
         <div class="log-timestamp">${dateStr} ${timeStr}</div>
         <div class="log-message flex-1">${message}</div>
+        ${ip ? `<div class="log-meta">IP: ${ip}</div>` : ''}
         <div class="log-type-badge">
             <i class="fas ${getLogIcon(type)}"></i>
         </div>
